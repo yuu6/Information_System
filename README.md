@@ -18,19 +18,19 @@ __信息系统大作业__
 
 + USER_GROUP 这个是用户参加豆瓣小组信息
 
-  |gu_id|user_id|user_name|group_name|group_tag|
+  |gu_id|userid|name|g_name|g_tag|
   |-----|------|-----|------|------|
   |主键无实质含义|用户的id|用户的名字|小组的评分|小组的标签信息|
   
 + USER_BOOK 这个是用户读书信息
 
-  |event_id|user_name|user_id|book_id|
+  |eventid|name|userid|bookid|
   |-----|-----|----|------|
   |主键无实质含义|用户的名字|用户的id|书籍的id|
   
 + USER_MOVIE 这个是用户看电影信息
 
-  |um_id|user_name|user_id|movie_id|
+  |um_id|name|userid|movieid|
   |-----|-----|----|------|
   |主键无实质含义|用户的名字|用户的id|电影的id|
 
