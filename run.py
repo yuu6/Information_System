@@ -14,6 +14,9 @@ app.config.from_object(DevConfig)
 
 
 
+
+
+
 def connect_db():
     return sqlite3.connect(DATABASE)
 
