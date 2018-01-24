@@ -9,6 +9,6 @@ import pandas as pd
 
 
 conn= sqlite3.connect("douban.db")
-df = pandas.read_csv('../dataset/modelData/UserMovie.csv')
-df.to_sql('UserMovie', conn, if_exists='append', index=False)
+df = pandas.read_csv('../dataset/attention.csv')
+df.to_sql('User_Attention', conn, if_exists='append', index=False)
 print('ok')
