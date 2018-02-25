@@ -5,59 +5,39 @@
     <meta charset="UTF-8">
     <title>网络展示</title>
 
-    <link rel="stylesheet" href="../static/css/my.css" type="text/css" media="screen">
+    <style type="text/css">
+        /* cytoscape graph */
+        #cy {
+            height: 1200px;
+            width: 1900px;
+            background-color: #f9f9f9;
+            margin-left: 8%;
+        }
+    </style>
+
+{#    <link rel="stylesheet" href="../static/css/my.css" type="text/css" media="screen">#}
+
     <script src="../static/js/jquery.min.js"></script>
     <script src="../static/cytoscape/cytoscape.js"></script>
-
 
 </head>
 <body>
 这个是用户之间的交互网络展示
-<div id="graph"></div>
+<div id="cy"></div>
 
 <script type="text/javascript">
-
-    var cy = cytoscape({
-        //前面四个是普通的选择
-        container: document.getElementById('graph'), // container to render in
-        elements: [ // 格式一般是数组
-            { // 点
-                data: {id: 'a'}
-            },
-            { // 点
-                data: {id: 'b'}
-            },
-            { // 边
-                data: {id: 'ab', source: 'a', target: 'b'}
-            }
-        ],
-
-        style: [ // the stylesheet for the graph
-            {
-                selector: 'node',
-                style: {
-                    'background-color': '#ddd126',
-                    'label': 'data(id)'
-                }
-            },
-
-            {
-                selector: 'edge',
-                style: {
-                    'width': 3,
-                    'line-color': '#cc6d5b',
-                    'target-arrow-color': '#cc384c',
-                    'target-arrow-shape': 'triangle'
-                }
-            }
-        ],
-
-        layout: {
-            name: 'grid',
-            rows: 5
-        }
-
+    $(function(){
+      $.get('/cy_data', function(data) {
+        console.log(data)
+        var cy = cytoscape({
+          container: document.getElementById('cy'),
+          {#style: style,#}
+          layout: { name: 'random' ,fit: true},
+          elements: data.elements
+        });
+      }, 'json');
     });
+
 </script>
 </body>
 

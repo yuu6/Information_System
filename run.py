@@ -4,6 +4,8 @@ from flask import request, render_template, jsonify
 # from flask.ext.sqlalchemy import SQLAlchemy
 import sqlite3
 from flask import g
+import pandas as pd
+import csv
 
 DATABASE = 'data_procession/douban.db'
 
@@ -13,7 +15,6 @@ app.config.from_object(DevConfig)
 
 def connect_db():
     return sqlite3.connect(DATABASE)
-
 
 @app.before_request
 def before_request():
@@ -55,6 +56,60 @@ def network():
 @app.route('/tuijian')
 def tuijian():
     return render_template('tuijian.html')
+
+@app.route('/cy_data', methods=['Get', 'POST'])
+def cy_data():
+    # data = {
+    #     "elements": {
+    #         "edges": [
+    #                      {"data": {"relationship": "ACTED_IN", "source": "173", "target": "327"}},
+    # ],
+    # "nodes": [
+    #              {"data": {"id": "173", "label": "Movie", "released": 1999, "tagline": "Welcome to the Real World",
+    #                        "title": "The Matrix"}},
+    #              {"data": {"born": 1962, "id": "327", "label": "Person", "name": "Tom Cruise"}},
+    # ]
+    # }
+    # }
+    #现在需要封装数据，这些数据主要是用户之间的关注信息
+        #每个用户是一个顶点，每个用户之间的专注信息是边，应该将顶点分为两部分，一部分是孤立点，另一部分是关联点，
+        #我们主要构件的是关联点之间的关系
+    sql = 'select * from User_Attention'
+    data1=query_db(sql)
+    #形成的节点
+    nodes = []
+    for i in range(len(data1)):
+        dict_o = {}
+        dict = {}
+        dict["id"] = str(data1[i]["userid"])
+        dict["name"] = data1[i]["name"]
+        dict["label"] = data1[i]["name"]
+        dict_o["data"] = dict
+        nodes.append(dict_o)
+    #形成的边
+    # print(nodes)
+    edges = []
+
+    # pd_edge = pd.DataFrame(columns=["source","target"])
+
+    for i in range(len(data1)):
+        source = str(data1[i]["userid"])
+        temp0 = data1[i]["attention_ids"][1:-1].replace("'","").strip().split(",")
+        temp = list(set(temp0))
+        print(temp)
+        if temp != ['']:
+            for j in range(len(temp)):
+                dict_o = {}
+                dict = {}
+                dict["source"] = str(source)
+                dict["target"] = temp[j].strip()
+                dict_o["data"] = dict
+                edges.append(dict_o)
+                # pd_edge.loc[pd_edge.shape[0] + 1] = {'source':str(source) , 'target': temp[j].strip()}
+
+    # pd_edge.to_csv("edges.csv",index = False)
+    return jsonify(elements={"nodes": nodes, "edges": edges})
+
 
 
 @app.route('/get_userbookinfo', methods=['Get', 'POST'])
