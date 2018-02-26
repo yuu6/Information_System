@@ -1,45 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"  style="height: 100%">
 
 <head>
     <meta charset="UTF-8">
-    <title>网络展示</title>
-
-    <style type="text/css">
-        /* cytoscape graph */
-        #cy {
-            height: 1200px;
-            width: 1900px;
-            background-color: #f9f9f9;
-            margin-left: 8%;
-        }
-    </style>
-
-{#    <link rel="stylesheet" href="../static/css/my.css" type="text/css" media="screen">#}
-
-    <script src="../static/js/jquery.min.js"></script>
-    <script src="../static/cytoscape/cytoscape.js"></script>
-
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/js/echarts.min.js"></script>
+<script src="../static/js/dataTool.min.js"></script>
 </head>
-<body>
+<body style="height: 100%; margin: 0">
 这个是用户之间的交互网络展示
-<div id="cy"></div>
+<div id="container" style="height: 100%"></div>
+    <script>
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+    myChart.showLoading();
+    $.get('network_gexf',function(s) {
+        myChart.hideLoading();
+        var graph = echarts.dataTool.gexf.parse(s);
+        console.log(graph)
+        {#graph.nodes.forEach(function (node) {#}
+        {#    node.itemStyle = null;#}
+            {#node.value = node.label;#}
+        {#    node.label = node.name;#}
+            {#node.category = node.attributes.modularity_class;#}
+        option = {
+            title: {
+                text: '豆瓣用户网络',
+                subtext: 'Default layout',
+                top: 'bottom',
+                left: 'right'
+            },
+            tooltip: {},
+            {#legend: [{#}
+            {#    // selectedMode: 'single',#}
+            {#    data: categories.map(function (a) {#}
+            {#        return a.name;#}
+            {#    })#}
+            animationDuration: 1500,
+            animationEasingUpdate: 'quinticInOut',
+            series : [
+                {
+                    name: '豆瓣用户网络',
+                    type: 'graph',
+                    layout: 'circular',
+                    data: graph.nodes,
+                    links: graph.links,
+                    {#categories: categories,#}
+                    roam: true,
+                    {#label: {#}
+                    {#    normal: {#}
+                    {#        position: 'right',#}
+                    {#        formatter: '{b}'#}
+                    {#    }#}
+                    lineStyle: {
+                        normal: {
+                            color: 'source',
+                            curveness: 0.3
+                        }
+                    }
+                }
+            ]
+        };
 
-<script type="text/javascript">
-    $(function(){
-      $.get('/cy_data', function(data) {
-        console.log(data)
-        var cy = cytoscape({
-          container: document.getElementById('cy'),
-          {#style: style,#}
-          layout: { name: 'random' ,fit: true},
-          elements: data.elements
-        });
-      }, 'json');
-    });
-
-</script>
+        myChart.setOption(option);
+    }, 'xml');
+    </script>
 </body>
-
-
 </html>

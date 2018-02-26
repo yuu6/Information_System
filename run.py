@@ -7,6 +7,7 @@ from flask import g
 import pandas as pd
 import csv
 
+
 DATABASE = 'data_procession/douban.db'
 
 app = Flask(__name__)
@@ -34,6 +35,10 @@ def index():
 @app.route('/second')
 def second():
     return render_template('second.html')
+
+@app.route('/network_gexf')
+def network_gexf():
+    return render_template('network.gexf')
 
 @app.route('/userinfo')
 def userinfo():
@@ -75,6 +80,8 @@ def cy_data():
         #每个用户是一个顶点，每个用户之间的专注信息是边，应该将顶点分为两部分，一部分是孤立点，另一部分是关联点，
         #我们主要构件的是关联点之间的关系
     sql = 'select * from User_Attention'
+
+    pd_node = pd.DataFrame(columns=["id", "name", "label"])
     data1=query_db(sql)
     #形成的节点
     nodes = []
@@ -86,6 +93,8 @@ def cy_data():
         dict["label"] = data1[i]["name"]
         dict_o["data"] = dict
         nodes.append(dict_o)
+        pd_node.loc[pd_node.shape[0] + 1] = {'id': str(data1[i]["userid"]), 'name': data1[i]["name"],'label':data1[i]["name"]}
+    pd_node.to_csv("nodes.csv", index=False)
     #形成的边
     # print(nodes)
     edges = []
@@ -119,7 +128,7 @@ def get_userbookinfo():
     sql = 'select * from MOVIE_DETAIL ,UserMovie WHERE  UserMovie.movieid = MOVIE_DETAIL.movie_id and UserMovie.name =  \"'+ my_name +'\"';
     print(sql)
     try:
-        data = query_db(sql);
+        data = query_db(sql)
         print(data[0])
     except Exception:
         print("查询失败")
