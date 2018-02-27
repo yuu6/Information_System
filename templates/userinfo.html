@@ -6,6 +6,8 @@
      <link rel="stylesheet" href="../static/bootstrap-select/bootstrap.min.css" type="text/css" media="screen">
     <link rel="stylesheet" href="../static/bootstrap-select/bootstrap-select.css" type="text/css" media="screen">
     <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/echarts.min.js"></script>
+    <script src="../static/js/echarts-wordcloud.js"></script>
     <script src="../static/bootstrap-select/bootstrap.min.js"></script>
     <script src="../static/bootstrap-select/bootstrap-select.js"></script>
 </head>
@@ -29,28 +31,88 @@
     </form>
 </div>
 
+<div id ="ciyun" style="position: absolute ;top: 15%;width: 40%;height: 60%;color: black;background-color:rgba(255,255,0,0);z-index: 9999">
+    ciyunbufen
+</div>
 <script type="text/javascript">
+    var dom = document.getElementById("ciyun");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+    {#myChart.showLoading();#}
+    console.log("ok")
 
      $.get("username", function(username) {
-         console.log(username.length);
+         {#console.log(username.length);#}
          for(var i=0;i< username.length;i++) {
-             console.log(username[i]);
+             {#console.log(username[i]);#}
              $("#username").append("<option value='" +Object.values( username[i] )+ "'>" +Object.values( username[i] ) + "</option>");
          }
          $('#username').selectpicker('refresh');
         }
      )
 
-    $("#button").on("click",function(){
-        var name=$('#username').selectpicker('val');
+    $("#button").on("click",function() {
+        var name = $('#username').selectpicker('val');
         console.log(name);
-        $.get("get_userbookinfo",{user_name:name},function(userbookinfo){
+        $.get("get_userbookinfo", {user_name: name}, function (userbookinfo) {
+        })
+
+
+        $.get("ciyun", {user_name: name}, function (ciyun) {
+            console.log(ciyun)
+            {#myChart.hideLoading();#}
+            option = {
+                 title: {
+                    text: "'"+name+"'"+"词云图",
+                    x: 'center',
+                    bottom:10,
+                    textStyle: {
+                        fontSize: 43,
+                        color: '#1da819'
+
+                    }
+
+                },
+                tooltip: {},
+                series: [ {
+                    type: 'wordCloud',
+                    gridSize: 5,
+                    sizeRange: [35, 90],
+                    rotationRange: [0, 0],
+                    shape: 'circle',
+                    width: 1600,
+                    height: 1400,
+                    textStyle: {
+                        normal: {
+                            color: function () {
+                                return 'rgb(' + [
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160)
+                                ].join(',') + ')';
+                            }
+                        },
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowColor: '#333'
+                        }
+                    },
+                    data: ciyun
+                }]
+            }
+
+            myChart.setOption(option);
+        })
+
+
+        {#myChart.setOption(option);#}
+        myChart.on('click', function (params) {
+            //alert((params.name));
+            {#window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));#}
+
         })
     })
-
-
-
-
 
 
 

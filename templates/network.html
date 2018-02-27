@@ -44,7 +44,8 @@
                 {
                     name: '豆瓣用户网络',
                     type: 'graph',
-                    layout: 'circular',
+                    layout: 'force',
+                    symbolSize: 10,
                     data: graph.nodes,
                     links: graph.links,
                     {#categories: categories,#}
@@ -54,6 +55,9 @@
                     {#        position: 'right',#}
                     {#        formatter: '{b}'#}
                     {#    }#}
+                    force: {
+                        repulsion: 1000
+                    },
                     lineStyle: {
                         normal: {
                             color: 'source',

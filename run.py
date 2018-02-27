@@ -45,6 +45,37 @@ def userinfo():
     return render_template('userinfo.html')
 
 
+
+@app.route('/ciyun', methods=['Get', 'POST'])
+def ciyun():
+    my_name = request.args.get("user_name")
+    print("my_name is " + my_name)
+    sql = 'SELECT  * from all_tag WHERE  name = \"' + my_name + '\"'
+    print(sql)
+    dict = {}
+    try:
+        data = query_db(sql)
+        dict = data[0]
+    except Exception:
+        print("查询失败")
+    movie = str(dict["movie_tag"])
+    book = str(dict["book_tag"])
+    all = movie.replace("]",",")+book.replace("[","")
+    list1 = all[1:-1].replace("'", "").strip().split(",")
+    list2 = []
+    wordcount = {}
+    for i in list1:
+        if list1.count(i) >= 1:
+            wordcount[i] = list1.count(i)
+    for key, values in wordcount.items():
+        dict = {}
+        dict["name"] = key.strip()
+        dict["value"] = values
+        list2.append(dict)
+    print(list2)
+    return jsonify(list2)
+
+
 @app.route('/username')
 def username():
     try:
