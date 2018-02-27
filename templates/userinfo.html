@@ -12,7 +12,16 @@
     <script src="../static/bootstrap-select/bootstrap-select.js"></script>
 </head>
 
-<body>
+
+
+
+
+
+<div id ="ciyun" style="position: absolute ;left:10%;top: 15%;width: 40%;height: 60%;color: black;background-color:rgba(255,255,0,0);z-index: 9999">
+
+</div>
+
+
 <div id="select" style="position: absolute;left: 80%;top: 5%;width: 18%;height: 10%;color: black;background-color:rgba(255,255,255,0);z-index: 9999">
 <form>
       <div id="legend" class="">
@@ -31,10 +40,32 @@
     </form>
 </div>
 
-<div id ="ciyun" style="position: absolute ;top: 15%;width: 40%;height: 60%;color: black;background-color:rgba(255,255,0,0);z-index: 9999">
-    ciyunbufen
+
+<div style="position: absolute ;left: 80%;top: 35%;width: 18%;height: 40%;color: black;background-color:rgba(255,255,0,0);z-index: 9999"
+>
+   <div class="list-group" id = "movie">
+	<a href="#" class="list-group-item active">
+		<h4 class="list-group-item-heading">
+			电影
+		</h4>
+	</a>
+</div>
+<div class="list-group " id = "book">
+	<a href="#" class="list-group-item active">
+		<h4 class="list-group-item-heading">
+			书籍
+		</h4>
+	</a>
+
+</div>
 </div>
 <script type="text/javascript">
+    $('#myList a').on('click', function (e) {
+      e.preventDefault()
+      $(this).tab('show')
+    })
+
+
     var dom = document.getElementById("ciyun");
     var myChart = echarts.init(dom);
     var app = {};
@@ -56,11 +87,62 @@
         var name = $('#username').selectpicker('val');
         console.log(name);
         $.get("get_userbookinfo", {user_name: name}, function (userbookinfo) {
+            var len = userbookinfo.length
+            console.log(len)
+            for(var i = 0;i<len ;i++){
+                movie_name = userbookinfo[i]["movie_name"]
+                movie_rate= userbookinfo[i]["movie_rate"]
+                movie_tag =userbookinfo[i]["movie_tag"]
+
+                var oTest = document.getElementById("movie");
+                var newA = document.createElement("a");
+                newA.setAttribute("class", "list-group-item")
+                var newH = document.createElement("h4");
+                newH.innerHTML =  movie_name
+                newH.setAttribute("class", "list-group-item-heading")
+
+                var newp = document.createElement("p");
+                newp.innerHTML = movie_rate
+                newp.setAttribute("class", "list-group-item-text")
+
+                newA.appendChild(newH)
+                {#newA.appendChild(newp)#}
+                oTest.appendChild(newA)
+            }
         })
+
+        $.get("get_usermovieinfo", {user_name: name}, function (usermovieinfo) {
+            var len = usermovieinfo.length
+            console.log(usermovieinfo)
+            for(var i = 0;i<len ;i++) {
+                book_name = usermovieinfo[i]["book_name"]
+                {#movie_rate= usermovieinfo[i]["movie_rate"]#}
+                {#movie_tag =usermovieinfo[i]["movie_tag"]#}
+                console.log(book_name)
+
+                var oTest = document.getElementById("book");
+                var newA = document.createElement("a");
+                newA.setAttribute("class", "list-group-item")
+                var newH = document.createElement("h4");
+                newH.innerHTML = book_name
+                newH.setAttribute("class", "list-group-item-heading")
+
+                var newp = document.createElement("p");
+                newp.innerHTML = movie_rate
+                newp.setAttribute("class", "list-group-item-text")
+
+                newA.appendChild(newH)
+                {#newA.appendChild(newp)#}
+                oTest.appendChild(newA)
+            }
+            })
+
+
+
 
 
         $.get("ciyun", {user_name: name}, function (ciyun) {
-            console.log(ciyun)
+            {#console.log(ciyun)#}
             {#myChart.hideLoading();#}
             option = {
                  title: {
@@ -72,8 +154,8 @@
                         color: '#1da819'
 
                     }
-
                 },
+
                 tooltip: {},
                 series: [ {
                     type: 'wordCloud',
@@ -106,7 +188,7 @@
         })
 
 
-        {#myChart.setOption(option);#}
+
         myChart.on('click', function (params) {
             //alert((params.name));
             {#window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));#}

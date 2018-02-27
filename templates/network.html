@@ -3,13 +3,80 @@
 
 <head>
     <meta charset="UTF-8">
+      <link rel="stylesheet" href="../static/bootstrap-select/bootstrap.min.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="../static/bootstrap-select/bootstrap-select.css" type="text/css" media="screen">
+
 <script src="../static/js/jquery.min.js"></script>
 <script src="../static/js/echarts.min.js"></script>
 <script src="../static/js/dataTool.min.js"></script>
+    <script src="../static/bootstrap-select/bootstrap.min.js"></script>
+    <script src="../static/bootstrap-select/bootstrap-select.js"></script>
 </head>
 <body style="height: 100%; margin: 0">
-这个是用户之间的交互网络展示
-<div id="container" style="height: 100%"></div>
+
+<div id="container" style="position: absolute ;height: 100%;width: 80%"></div>
+<div id="other_top" style="position: absolute ;left: 80%;height: 30%;width: 20%">
+    <div class="list-group" style="width: 100%">
+      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
+        <h5 class="mb-1">网络特征展示</h5>
+      </a>
+
+
+      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+
+            <table class="table table-hover table-striped" style="width: 100%" >
+                <tr style="width: 100%">
+                    <td style="width: 50%">平均度</td><td style="width: 50%;align-self: right">7.771</td>
+                </tr>
+                <tr style="width: 100%">
+                    <td style="width: 50%">平均加权度</td><td style="width: 50%;align-self: right">47.772</td>
+                </tr>
+                <tr style="width: 100%">
+                    <td style="width: 50%">网络直径</td><td style="width: 50%;align-self: right">7</td>
+                </tr>
+                <tr style="width: 100%">
+                    <td style="width: 50%">模块度</td><td style="width: 50%;align-self: right"> 0.350</td>
+                </tr>
+                <tr style="width: 100%">
+                    <td style="width: 50%">社区划分</td><td style="width: 50%;align-self: right"> 18</td>
+                </tr>
+                <tr style="width: 100%">
+                    <td style="width: 50%">平均聚集系数</td><td style="width: 50%;align-self: right">0.219</td>
+                </tr>
+                <tr style="width: 100%">
+                    <td style="width: 50%">平均路径长度</td><td style="width: 50%;align-self: right">2.81</td>
+                </tr>
+
+            </table>
+
+        </div>
+      </a>
+
+    </div>
+</div>
+<div id="other_top" style="position: absolute ;left: 80%;top: 30%;height: 65%;width: 20%">
+     <div class="list-group" style="width: 100%">
+      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
+        <h5 class="mb-1">节点特征显示</h5>
+      </a>
+
+
+      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+
+            <table class="table table-hover table-striped" style="width: 100%" >
+                <tr style="width: 100%">
+                    <td style="width: 50%">平均度</td><td style="width: 50%;align-self: right">7.771</td>
+                </tr>
+
+            </table>
+
+        </div>
+      </a>
+
+    </div>
+</div>
     <script>
     var dom = document.getElementById("container");
     var myChart = echarts.init(dom);
@@ -17,8 +84,10 @@
     option = null;
     myChart.showLoading();
     $.get('network_gexf',function(s) {
+        console.log(s)
         myChart.hideLoading();
         var graph = echarts.dataTool.gexf.parse(s);
+        {#print(graph)#}
         console.log(graph)
         {#graph.nodes.forEach(function (node) {#}
         {#    node.itemStyle = null;#}
@@ -26,6 +95,7 @@
         {#    node.label = node.name;#}
             {#node.category = node.attributes.modularity_class;#}
         option = {
+            backgroundColor: '#000',
             title: {
                 text: '豆瓣用户网络',
                 subtext: 'Default layout',
@@ -56,7 +126,9 @@
                     {#        formatter: '{b}'#}
                     {#    }#}
                     force: {
-                        repulsion: 1000
+                        repulsion: 400,
+                        gravity:0.1,
+
                     },
                     lineStyle: {
                         normal: {

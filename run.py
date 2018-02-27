@@ -38,7 +38,8 @@ def second():
 
 @app.route('/network_gexf')
 def network_gexf():
-    return render_template('network.gexf')
+    print("run here")
+    return render_template('info.gexf')
 
 @app.route('/userinfo')
 def userinfo():
@@ -160,7 +161,21 @@ def get_userbookinfo():
     print(sql)
     try:
         data = query_db(sql)
-        print(data[0])
+        # print(data[0])
+    except Exception:
+        print("查询失败")
+    return jsonify(data)
+
+
+@app.route('/get_usermovieinfo', methods=['Get', 'POST'])
+def get_usermovieinfo():
+    my_name = request.args.get("user_name")
+    print("my_name is " + my_name)
+    sql = 'select * from BOOK_DETAIL ,UserBook WHERE  UserBook.bookid = BOOK_DETAIL.book_id and UserBook.name =  \"'+ my_name +'\"';
+    print(sql)
+    try:
+        data = query_db(sql)
+        # print(data[0])
     except Exception:
         print("查询失败")
     return jsonify(data)
