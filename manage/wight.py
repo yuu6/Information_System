@@ -7,6 +7,7 @@ import sqlite3
 from flask import g
 import pandas as pd
 import math
+from collections import Counter
 """计算用户之间的相似度"""
 def get_movie_tag():
     DATABASE = '../data_procession/douban.db'
@@ -120,6 +121,25 @@ def get_Similar(a,b):
 
     return  calcuteSimilar(s1,s2)*100
 
+def tuijianuser(tag):
+    DATABASE = '../data_procession/douban.db'
+    conn = sqlite3.connect(DATABASE)
+    c = conn.cursor()
+    # print("Opened database successfully")
+    sql1 = "SELECT DISTINCT  userid from UserNode"
+    userid = c.execute(sql1)
+    # print(list(userid))
+    dict_ = {}
+    for i in list(userid):
+        print(i[0])
+        s1 = zhixing(i[0])
+        simi = calcuteSimilar(s1, tag)
+        dict_[i[0]] = simi
+    conn.close()
+
+    c = Counter(dict_).most_common()
+    print(c)
+    return dict_
 
 if __name__ =="__main__":
     #得到每个用户的标签 13402 10000 13404 13409
@@ -135,9 +155,15 @@ if __name__ =="__main__":
 
     # print(get_Similar("10817","10998"))
     #计算相似度
-    ed_pd = pd.read_csv("../dataset/edges.csv")
-    ed_pd["wight"] = None
-    ed_pd["wight"] = ed_pd.apply(lambda row:get_Similar(str(row['source']),str(row['target'])),axis=1)
-    ed_pd.to_csv("edges_wight.csv",index=False)
+
+    # ed_pd = pd.read_csv("../dataset/edges.csv")
+    # ed_pd["wight"] = None
+    # ed_pd["wight"] = ed_pd.apply(lambda row:get_Similar(str(row['source']),str(row['target'])),axis=1)
+    # ed_pd.to_csv("edges_wight.csv",index=False)
     # print(get_Similar("10012","10009"))
     # pass
+    list_ = []
+    list_.append('日本')
+    list_.append('小说')
+    list_.append('治愈系')
+    tuijianuser(list_)

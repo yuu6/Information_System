@@ -31,7 +31,8 @@ def get_graph():
         tup2 = (node1, node2, weight)
         edge_list.append(tup2)
     # print(node_list)
-    G=nx.Graph()
+    # G=nx.Graph()
+    G=nx.DiGraph()
     # G.add_nodes_from([2,3])
     G.add_nodes_from(node_list)
     # print(G.nodes(data=True))
@@ -39,18 +40,18 @@ def get_graph():
     G.add_weighted_edges_from(edge_list)
     # print(G.edges(data=True))
 
-    degree = list(G.degree())
-    for temp in degree:
-        if temp[1]==0:
-            G.remove_node(temp[0])
+    # degree = list(G.degree())
+    # for temp in degree:
+    #     if temp[1]==0:
+    #         G.remove_node(temp[0])
 
-    c = list(k_clique_communities(G, 1))
+    # c = list(k_clique_communities(G, 1))
 
-    for i in range(len(c)):
-        nodeL = list(c[i])
-        print(len(nodeL))
-        for j in nodeL:
-            G.node[int(j)]['class'] = i
+    # for i in range(len(c)):
+    #     nodeL = list(c[i])
+    #     print(len(nodeL))
+    #     for j in nodeL:
+    #         G.node[int(j)]['class'] = i
     # for node,degree in G.degree().item():
     #
 
@@ -65,8 +66,8 @@ def get_graph_exist():
     print(G.nodes(data = True))
 
 if __name__ =="__main__":
-    # get_graph()
-    get_graph_exist()
+    get_graph()
+    # get_graph_exist()
 
 
 

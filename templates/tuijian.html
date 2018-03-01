@@ -8,21 +8,20 @@
     <script src="../static/js/jquery.min.js"></script>
     <script src="../static/js/echarts.min.js"></script>
     <script src="../static/js/dataTool.min.js"></script>
+    <script src="../static/js/echarts-wordcloud.js"></script>
+
     <script src="../static/bootstrap-select/bootstrap.min.js"></script>
     <script src="../static/bootstrap-select/bootstrap-select.js"></script>
 </head>
 <body>
-<form>
-    <div style="position: absolute ;top:20%;height: 20%;width: 50%">
+<form style="position: absolute ;height: 40%;width:40%;icolor: black;background-color:rgba(255,255,0,0);z-index: 9999">
+    <div>
         <div>
-            　　　　　　　　　　　　　　
             <div class="form-group">
-                <label class="col-sm-3 control-label" style="text-align: right">电影：</label>
-                <div class="col-sm-4">
-                    <select id="usertype" name="usertype" class="selectpicker show-tick form-control" multiple
+                <label class="col-sm-1 control-label" style="text-align: right">电影：</label>
+                <div class="col-sm-10">
+                    <select   id="moviename" name="usertype" class="selectpicker show-tick form-control" multiple
                             data-live-search="false">
-                        <option value="0">苹果</option>
-
                     </select>
                 </div>
             </div>
@@ -31,17 +30,25 @@
         <div>
             　　　　　　　　　　　　　　
             <div class="form-group">
-                <label class="col-sm-3 control-label" style="text-align: right">书籍：</label>
-                <div class="col-sm-4">
-                    <select id="usertype" name="usertype" class="selectpicker show-tick form-control" multiple
+                <label class="col-sm-1 control-label" style="text-align: right">书籍：</label>
+                <div></div>
+                <div class="col-sm-10">
+
+{#                       <select multiple class="form-control" id="bookname">#}
+{#                          <option>1</option>#}
+{#                     #}
+{#                        </select>#}
+                    <select   id="bookname" name="usertype" class="selectpicker show-tick form-control" multiple
                             data-live-search="false">
-                        <option value="0">苹果</option>
+{#                        <option selected>Choose...</option>#}
                     </select>
+                    {#                    <label class="checkbox-inline"  id="bookname">#}
+                    {#                        </label>#}
                 </div>
             </div>
         </div>
 
-        <div class="control-group" style="position: absolute ;left:34%;top:80%;height: 15%;width: 15%">
+        <div class="control-group" style="position: absolute ;top:35%;width:20%;left: 30%">
             <div class="controls">
                 <a id="button" class="btn btn-success" style="width: 100%">确定</a>
             </div>
@@ -50,5 +57,247 @@
 
 </form>
 
+<form> <div class="control-group" style="position: absolute ;width:20%;left: 40%">
+            <div class="controls">
+                <a id="tuijian" class="btn btn-success" style="width: 100%">推荐</a>
+            </div>
+        <div class="list-group" id = "tuijian_user_show">
+            <a href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">
+                    推荐用户
+                </h4>
+            </a>
+        </div>
+        <div class="list-group" id = "tuijian_book_show">
+            <a href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">
+                    推荐书籍
+                </h4>
+            </a>
+        </div>
+        <div class="list-group" id = "tuijian_movie_show">
+            <a href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">
+                    推荐电影
+                </h4>
+            </a>
+        </div>
+
+
+        </div></form>
+
+<div id="youciyun"
+     style="position: absolute ;top: 40%;width:40%;height:60%;background-color:rgba(255,255,0,0);z-index: 9999">
+
+
+</div>
+<script type="text/javascript">
+    $.get("bookname", function (bookname) {
+            console.log(bookname.length);
+            for (var i = 0; i < bookname.length; i++) {
+                {#console.log(username[i]);#}
+                {#$("#bookname").append("<option value='" + Object.values(bookname[i]) + "'>" + Object.values(bookname[i]) + "</option>");#}
+                $("#bookname").append("<option value='" + Object.values(bookname[i]) + "'>" + Object.values(bookname[i]) + "</option>");
+                {#$("#bookname").append(" <div class=\"checkbox\">\n" +#}
+                {#    "    <label><input type=\"checkbox\" id=\"inlineCheckbox1\" value='" +Object.values( bookname[i] )+ "'>" +Object.values( bookname[i] ) + "</label>\n" +#}
+                {#    "</div>");#}
+            }
+            $('#bookname').selectpicker('refresh');
+        }
+    )
+    $.get("moviename", function (bookname) {
+            console.log(bookname.length);
+            for (var i = 0; i < bookname.length; i++) {
+                {#console.log(username[i]);#}
+                $("#moviename").append("<option value='" + Object.values(bookname[i]) + "'>" + Object.values(bookname[i]) + "</option>");
+            }
+            $('#moviename').selectpicker('refresh');
+        }
+    )
+
+    $("#tuijian").on("click", function () {
+
+        $.get("tuijian_user", function (usertuijian) {
+            {#console.log(usertuijian)#}
+            usertuijian_user = usertuijian["user"]
+            usertuijian_book= usertuijian["book"]
+            usertuijian_movie= usertuijian["movie"]
+            console.log(usertuijian_movie)
+
+            var oTest = document.getElementById("tuijian_user_show");
+            var childs = oTest.childNodes;
+            if(childs.length>0){
+                for(var i = 0; i < childs.length; i++) {
+                    oTest.removeChild(childs[i]);}
+            }
+
+            var book = document.getElementById("tuijian_book_show");
+                var childs_ = book.childNodes;
+                if(childs_.length>0){
+                    for(var i = 0; i < childs_.length; i++) {
+                      book.removeChild(childs_[i]);
+                    }}
+
+               var movie = document.getElementById("tuijian_movie_show");
+                var child_s = movie.childNodes;
+                if(child_s.length>0){
+                for(var i = 0; i < child_s.length; i++) {
+                  movie.removeChild(child_s[i]);}}
+
+            var len = usertuijian_user.length
+            console.log(len)
+            for(var i = 0;i<len ;i++){
+                user_name = usertuijian_user[i]["username"]
+                userid= usertuijian_user[i]["userid"]
+                console.log(user_name + userid)
+
+                {#var oTest = document.getElementById("tuijian_user_show");#}
+                {#var childs = oTest.childNodes;#}
+                {#console.log(childs.length)#}
+                {#if(childs.length>0){#}
+                {#     for(var i = 0; i < childs.length; i++) {#}
+                {#    oTest.removeChild(childs[i]);#}
+
+
+                var newA = document.createElement("a");
+                newA.setAttribute("class", "list-group-item")
+                var newH = document.createElement("h4");
+                newH.innerHTML =  user_name
+                newH.setAttribute("class", "list-group-item-heading")
+                var newp = document.createElement("p");
+                newp.innerHTML = userid
+                newp.setAttribute("class", "list-group-item-text")
+                newA.appendChild(newH)
+                oTest.appendChild(newA)
+            }
+
+            for(var j = 0;j<usertuijian_book.length ;j++){
+
+                var newA_ = document.createElement("a");
+                newA_.setAttribute("class", "list-group-item")
+                var newH_ = document.createElement("h4");
+                newH_.innerHTML =  usertuijian_book[j]
+                newH_.setAttribute("class", "list-group-item-heading")
+                {#var newp_ = document.createElement("p");#}
+                {#newp.innerHTML = userid#}
+                {#newp.setAttribute("class", "list-group-item-text")#}
+                newA_.appendChild(newH_)
+                book.appendChild(newA_)
+            }
+            for(var k = 0;k<usertuijian_movie.length ;k++){
+
+                var new_A = document.createElement("a");
+                new_A.setAttribute("class", "list-group-item")
+                var new_H = document.createElement("h4");
+                new_H.innerHTML =  usertuijian_movie[k]
+                new_H.setAttribute("class", "list-group-item-heading")
+                {#var newp_ = document.createElement("p");#}
+                {#newp.innerHTML = userid#}
+                {#newp.setAttribute("class", "list-group-item-text")#}
+                new_A.appendChild(new_H)
+                movie.appendChild(new_A)
+            }
+        })
+    })
+
+    {#var tag_all = [];#}
+    $("#button").on("click", function () {
+
+
+        var bookname = $('#bookname').selectpicker('val');
+        var jsonbook = JSON.stringify(bookname);
+        {#console.log(bookname);#}
+        var moviename = $('#moviename').selectpicker('val');
+        var jsonmovie = JSON.stringify(moviename);
+
+        {#$("#bookname").reload();#}
+        {#$("#moviename").reload();#}
+
+        $.get("get_tag", {book_name: jsonbook, movie_name: jsonmovie}, function (tttt) {
+            console.log(tttt)
+            var dom = document.getElementById("youciyun");
+            var myChart = echarts.init(dom);
+             option = {
+                 title: {
+                    {#text: "'"+name+"'"+"词云图",#}
+                    x: 'center',
+                    bottom:10,
+                    textStyle: {
+                        fontSize: 43,
+                        color: '#1da819'
+
+                    }
+                },
+
+                tooltip: {},
+                series: [ {
+                    type: 'wordCloud',
+                    gridSize: 5,
+                    sizeRange: [35, 90],
+                    rotationRange: [0, 0],
+                    shape: 'circle',
+                    width: 1600,
+                    height: 1400,
+                    textStyle: {
+                        normal: {
+                            color: function () {
+                                return 'rgb(' + [
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160),
+                                    Math.round(Math.random() * 160)
+                                ].join(',') + ')';
+                            }
+                        },
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowColor: '#333'
+                        }
+                    },
+                    data: tttt
+                }]
+            }
+
+            myChart.setOption(option);
+        })
+        {#for(var i  in bookname){#}
+        {#    $.get("get_booktag", {book_name: bookname[i]}, function (tag1) {#}
+        {#        var tag_str = tag1[0]["book_tag"]#}
+        {#        var len = tag_str.length#}
+        {#        var temp= tag_str.substring(1,len-1).replace(/'/g,"").trim().split(",")#}
+        {#console.log(temp)#}
+        {#        for(var j in temp) {#}
+        {#            tag_all.push(temp[j])#}
+        {#        }#}
+        {#    })#}
+        {##}
+        {##}
+        {##}
+        {#for(var m  in moviename){#}
+        {#    $.get("get_movietag", {movie_name: moviename[m]}, function (tag) {#}
+        {#        console.log(tag)#}
+        {#        var tag_str = tag[0]["movie_tag"];#}
+        {#        var len = tag_str.length;#}
+        {#        var temp= tag_str.substring(1,len-1).replace(/'/g,"").trim().split(",")#}
+        {#console.log(temp);#}
+        {#        for(var j in temp) {#}
+        {#            tag_all.push(temp[j])#}
+        {#        }#}
+
+        {#    })#}
+
+        {#var tag_dic = {}#}
+        {#for(var i in tag_all){#}
+        {#    var tag_ = tag_all[i]#}
+        {#    if(tag_dic[tag_]==null){#}
+        {#        tag_dic[tag_]=1;#}
+        {#    }else{#}
+        {#        tag_dic[tag_]=tag_dic[tag_] +1;#}
+        {#    }#}
+
+
+    });
+
+
+</script>
 </body>
 </html>
