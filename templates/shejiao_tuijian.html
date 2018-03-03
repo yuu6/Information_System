@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>推荐好友</title>
+    <link rel="stylesheet" href="../static/bootstrap-select/bootstrap.min.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="../static/bootstrap-select/bootstrap-select.css" type="text/css" media="screen">
+{#    <link rel="stylesheet" href="../static/css/htmleaf-demo.css" type="text/css" media="screen">#}
+
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/echarts.min.js"></script>
+    <script src="../static/js/dataTool.min.js"></script>
+    <script src="../static/js/echarts-wordcloud.js"></script>
+    <script src="../static/bootstrap-select/bootstrap.min.js"></script>
+    <script src="../static/bootstrap-select/bootstrap-select.js"></script>
+    <script src="../static/js/jquery.bootstrap-autohidingnavbar.js"></script>
+</head>
+<body>
+
+
+
+<div style="text-align: center" id="all">
+    <div style="text-align: center">
+        <p style="font-size: 45px;text-align: center;">基于社交网络的推荐</p>
+    </div>
+    <div style="position: absolute ;width: 60%;left: 20%;top:10%;" >
+        <p style="text-align: center;font-size:40px;margin-bottom: 60px">
+            1.选择用户
+        </p>
+        <div style="text-align: center">
+            <form>
+                {#        <div>#}
+                {#            <div class="form-group">#}
+                <table width="80%" class="table">
+                    <tr>
+                        <td><label class=" control-label" style="width: 50%">用户：</label></td>
+                        <td>
+
+                            <select id="username" name="usertype" class="selectpicker show-tick form-control"
+                                    data-live-search="false">
+                            </select>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td colspan="2">
+
+                            <div class="controls">
+                                <a id="button" class="btn btn-success" style="width: 100%">确定</a>
+
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+
+    <div style="position: absolute ;width:60%;left: 20%;top: 60%;">
+        <p style="text-align: center;font-size:40px;margin-bottom: 60px">
+            2.推荐功能
+        </p>
+        <div>
+            <div class="control-group">
+                <div class="controls">
+                    <a id="tuijian" class="btn btn-success" style="width: 100%">推荐结果</a>
+                </div>
+                <div class="list-group" id="tuijian_user_show">
+                    <a href="#" class="list-group-item active">
+                        <h4 class="list-group-item-heading">
+                            推荐用户
+                        </h4>
+                    </a>
+                </div>
+                <div class="list-group" id="tuijian_book_show">
+                    <a href="#" class="list-group-item active">
+                        <h4 class="list-group-item-heading">
+                            推荐书籍
+                        </h4>
+                    </a>
+                </div>
+                <div class="list-group" id="tuijian_movie_show">
+                    <a href="#" class="list-group-item active">
+                        <h4 class="list-group-item-heading">
+                            推荐电影
+                        </h4>
+                    </a>
+                </div>
+
+            </div>
+            {#            </form>#}
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $.get("username", function (username) {
+                 for (var i = 0; i < username.length; i++) {
+                {#console.log(username[i]);#}
+                $("#username").append("<option value='" + Object.values(username[i]) + "'>" + Object.values(username[i]) + "</option>");
+            }
+            $('#username').selectpicker('refresh');
+        }
+    )
+ $("#tuijian").on("click", function () {
+     console.log("runbafafa")
+     var name = $('#username').selectpicker('val');
+console.log(name)
+$.get("shejiao_tuijian_2",{name:name}, function (usertuijian) {
+
+           usertuijian_user = usertuijian["user"]
+            usertuijian_book = usertuijian["book"]
+            usertuijian_movie = usertuijian["movie"]
+            console.log(usertuijian_movie)
+
+            var oTest = document.getElementById("tuijian_user_show");
+            var childs = oTest.childNodes;
+            if (childs.length > 0) {
+                for (var i = 0; i < childs.length; i++) {
+                    oTest.removeChild(childs[i]);
+                }
+            }
+
+            var book = document.getElementById("tuijian_book_show");
+            var childs_ = book.childNodes;
+            if (childs_.length > 0) {
+                for (var i = 0; i < childs_.length; i++) {
+                    book.removeChild(childs_[i]);
+                }
+            }
+
+            var movie = document.getElementById("tuijian_movie_show");
+            var child_s = movie.childNodes;
+            if (child_s.length > 0) {
+                for (var i = 0; i < child_s.length; i++) {
+                    movie.removeChild(child_s[i]);
+                }
+            }
+
+            var len = usertuijian_user.length
+            console.log(len)
+            for (var i = 0; i < len; i++) {
+                user_name = usertuijian_user[i]["username"]
+                userid = usertuijian_user[i]["userid"]
+                console.log(user_name + userid)
+
+                {#var oTest = document.getElementById("tuijian_user_show");#}
+                {#var childs = oTest.childNodes;#}
+                {#console.log(childs.length)#}
+                {#if(childs.length>0){#}
+                {#     for(var i = 0; i < childs.length; i++) {#}
+                {#    oTest.removeChild(childs[i]);#}
+
+
+                var newA = document.createElement("a");
+                newA.setAttribute("class", "list-group-item")
+                var newH = document.createElement("h4");
+                newH.innerHTML = user_name
+                newH.setAttribute("class", "list-group-item-heading")
+                var newp = document.createElement("p");
+                newp.innerHTML = userid
+                newp.setAttribute("class", "list-group-item-text")
+                newA.appendChild(newH)
+                oTest.appendChild(newA)
+            }
+
+            for (var j = 0; j < usertuijian_book.length; j++) {
+
+                var newA_ = document.createElement("a");
+                newA_.setAttribute("class", "list-group-item")
+                var newH_ = document.createElement("h4");
+                newH_.innerHTML = usertuijian_book[j]
+                newH_.setAttribute("class", "list-group-item-heading")
+                {#var newp_ = document.createElement("p");#}
+                {#newp.innerHTML = userid#}
+                {#newp.setAttribute("class", "list-group-item-text")#}
+                newA_.appendChild(newH_)
+                book.appendChild(newA_)
+            }
+            for (var k = 0; k < usertuijian_movie.length; k++) {
+
+                var new_A = document.createElement("a");
+                new_A.setAttribute("class", "list-group-item")
+                var new_H = document.createElement("h4");
+                new_H.innerHTML = usertuijian_movie[k]
+                new_H.setAttribute("class", "list-group-item-heading")
+                {#var newp_ = document.createElement("p");#}
+                {#newp.innerHTML = userid#}
+                {#newp.setAttribute("class", "list-group-item-text")#}
+                new_A.appendChild(new_H)
+                movie.appendChild(new_A)
+            }
+        })
+    });
+
+
+</script>
+</body>
+</html>

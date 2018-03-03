@@ -10,6 +10,8 @@ import json,math
 from collections import Counter
 from manage.nx import move_1
 import networkx as nx
+from similarity.jaccard import jaccard
+from similarity.ascos import ascos
 DATABASE = 'data_procession/douban.db'
 
 app = Flask(__name__)
@@ -59,8 +61,64 @@ def tuijian_user():
     dic_tuijian["book"] = list_book_name
     dic_tuijian["movie"] = list_movie_name
     print(dic_tuijian)
-
     return jsonify(dic_tuijian)
+
+
+@app.route('/shejiao_tuijian_2', methods=['Get', 'POST'])
+def shejiao_tuijian_2():
+    name = request.args.get("name")
+    tag = []
+    sql = "SELECT * FROM all_tag WHERE name = \"" + name + '\"';
+    data = []
+    try:
+        data = query_db(sql)
+        print(sql)
+        print(data)
+    except Exception:
+        print("查询失败")
+    # print(data)
+    list1 = data[0]['book_tag'][1:-1].replace("'", "").strip().split(",")
+    list2 = data[0]['movie_tag'][1:-1].replace("'", "").strip().split(",")
+    # print(list1)
+    for j in list1:
+        tag.append(j)
+    for t in list2:
+        tag.append(t)
+
+    dic_tuijian = {}
+    userlist = tuijianuser(tag)
+
+    user = get_userinfo(userlist)
+    list_book_name = get_userbookname(userlist)
+    list_movie_name = get_usermovie_info(userlist)
+    dic_tuijian["user"] = user
+    dic_tuijian["book"] = list_book_name
+    dic_tuijian["movie"] = list_movie_name
+    print(dic_tuijian)
+    return jsonify(dic_tuijian)
+
+def tuijian_shejiao(name):
+    #根据相似度和熟悉度对用户进行排序
+    #产生前十的用户
+
+    sql = "SELECT userid from UserNode where username=\""+name+"\""
+    userid = query_db(sql)
+    id = userid[0]["userid"]
+    print(id)
+    G_un = delDegreeOne(get_graph()).to_undirected()
+    dic_ = jaccard(G_un)
+    # filename = 'sim.csv'
+    # with open(filename, 'w') as f:  # 如果filename不存在会自动创建， 'w'表示写数据，写之前会清空文件中的原有数据！
+    #     csvWriter = csv.writer(f)
+    #     for k, v in dic_.items():
+    #         csvWriter.writerow([k, v])
+    #     f.close()
+
+    # sim = dic[]
+    print(dic_[12289])
+
+
+    return dic_
 
 def get_userbookname(l_):
     li_2= []
@@ -204,6 +262,9 @@ def network():
 @app.route('/tuijian')
 def tuijian():
     return render_template('tuijian.html')
+@app.route('/shejiao_tuijian')
+def shejiao_tuijian():
+    return render_template('shejiao_tuijian.html')
 
 @app.route('/move')
 def move():
