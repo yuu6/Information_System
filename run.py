@@ -8,7 +8,8 @@ import pandas as pd
 import csv
 import json,math
 from collections import Counter
-
+from manage.nx import move_1
+import networkx as nx
 DATABASE = 'data_procession/douban.db'
 
 app = Flask(__name__)
@@ -203,9 +204,10 @@ def network():
 @app.route('/tuijian')
 def tuijian():
     return render_template('tuijian.html')
-@app.route('/movie')
-def movie():
-    return render_template('movie.html')
+
+@app.route('/move')
+def move():
+    return render_template('move.html')
 
 @app.route('/cy_data', methods=['Get', 'POST'])
 def cy_data():
@@ -264,6 +266,24 @@ def cy_data():
     # pd_edge.to_csv("edges.csv",index = False)
     return jsonify(elements={"nodes": nodes, "edges": edges})
 
+@app.route('/propagation', methods=['Get', 'POST'])
+def propagation():
+    print("run here")
+    moxing = request.args.get("moxing")
+    degree = request.args.get("degree")
+    print(moxing,degree)
+    G = delDegreeOne(get_graph())
+    jieguo = move_1(moxing,degree,G)
+    lens = len(jieguo)-1
+    output = []
+    for i in jieguo:
+        node = []
+        for j in i:
+            node.append(int(j))
+        output.append(node)
+    return jsonify(output)
+
+
 
 
 @app.route('/get_userbookinfo', methods=['Get', 'POST'])
@@ -278,7 +298,6 @@ def get_userbookinfo():
     except Exception:
         print("查询失败")
     return jsonify(data)
-
 
 @app.route('/get_usermovieinfo', methods=['Get', 'POST'])
 def get_usermovieinfo():
@@ -418,5 +437,71 @@ def str_to_set(data1):
     temp0 = data1[1:-1].replace("'", "").strip().split(",")
     temp = list(set(temp0))
     return temp
+
+def get_graph():
+    nodes_pd = pd.read_csv("dataset/nodes.csv")
+    edges_pd = pd.read_csv("manage/edges_wight.csv")
+    #使用一个tuple  (node, attrdict) 构建node
+    node_list = []
+
+    for indexs in nodes_pd.index:
+        dict = {}
+        node = nodes_pd.loc[indexs].values[0]
+        dict["name"] = nodes_pd.loc[indexs].values[1]
+        dict["label"] = nodes_pd.loc[indexs].values[2]
+        tup1 = (node,dict)
+        node_list.append(tup1)
+
+    edge_list = []
+    for indexs in edges_pd.index:
+        node1 = int(edges_pd.loc[indexs].values[0])
+        node2 = int(edges_pd.loc[indexs].values[1])
+        weight = edges_pd.loc[indexs].values[2]
+        tup2 = (node1, node2, weight)
+        edge_list.append(tup2)
+    # print(node_list)
+    # G=nx.Graph()
+    G=nx.DiGraph()
+    # G.add_nodes_from([2,3])
+    G.add_nodes_from(node_list)
+    # print(G.nodes(data=True))
+
+    G.add_weighted_edges_from(edge_list,act_prob=0.8)
+    # print(G.edges(data=True))
+
+    # degree = list(G.degree())
+    # for temp in degree:
+    #     if temp[1]==0:
+    #         G.remove_node(temp[0])
+
+    # c = list(k_clique_communities(G, 1))
+
+    # for i in range(len(c)):
+    #     nodeL = list(c[i])
+    #     print(len(nodeL))
+    #     for j in nodeL:
+    #         G.node[int(j)]['class'] = i
+    # for node,degree in G.degree().item():
+    #
+
+    # remove = [node for node, degree in G.degree().items()  if degree == 0]
+    # G.remove_nodes_from(remove)
+    # print(G.nodes(data = True))
+    return G
+
+    # G.add_edges_from(edges)
+    # nx.write_gexf(G, 'network.gexf',encoding='utf-8')
+
+def delDegreeOne(G):
+    print(G.number_of_nodes())
+    d = nx.degree(G)
+    list_de =[]
+    for i in d:
+        if i[1]==0:
+            list_de.append(i[0])
+    G.remove_nodes_from(list_de)
+    print(G.number_of_nodes())
+    return G
+
 if __name__ == '__main__':
     app.run()

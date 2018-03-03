@@ -5,10 +5,9 @@
     <title>推荐好友</title>
     <link rel="stylesheet" href="../static/bootstrap-select/bootstrap.min.css" type="text/css" media="screen">
     <link rel="stylesheet" href="../static/bootstrap-select/bootstrap-select.css" type="text/css" media="screen">
-    <link rel="stylesheet" href="../static/css/htmleaf-demo.css" type="text/css" media="screen">
+{#    <link rel="stylesheet" href="../static/css/htmleaf-demo.css" type="text/css" media="screen">#}
 
     <script src="../static/js/jquery.min.js"></script>
-
     <script src="../static/js/echarts.min.js"></script>
     <script src="../static/js/dataTool.min.js"></script>
     <script src="../static/js/echarts-wordcloud.js"></script>
@@ -18,13 +17,14 @@
 </head>
 <body>
 
-<div style="top: 5%;text-align: center">
-    <h1>好友推荐</h1>
 
 
-    {#    <p class="container">#}
-    <div>
-        <p style="text-align: center;">
+<div style="text-align: center" id="all">
+    <div style="text-align: center">
+        <p style="font-size: 45px;text-align: center;">好友推荐</p>
+    </div>
+    <div style="position: absolute ;width: 80%;left: 10%;top:10%;" >
+        <p style="text-align: center;font-size:40px;margin-bottom: 60px">
             1.选择喜欢的电影以及书籍
         </p>
         <div style="text-align: center">
@@ -69,22 +69,29 @@
             </form>
         </div>
     </div>
-
-    <p style="text-align: center;">
-        2.词云图显示
+{#<p style="text-align: center;font-size:40px;margin-bottom: 30px">#}
+{#            1.选择喜欢的电影以及书籍#}
+{#        </p>#}
+    <p style="position: absolute ;top:40%;width: 80%;left: 10%;font-size:40px;margin-bottom: 30px">
+        2.词云图显示你的兴趣
     </p>
 
-
-    <div id="youciyun" style="position: absolute ;width:80%;height:50%;left: 10%">
+    <div id="youciyun" style="position: absolute ;width:80%;height:50%;left: 10%;top:35%">
 
     </div>
-    <div style="position: absolute ;width:80%;height:80%;left: 10%;top: 80%;">
-        <p style="text-align: center;">
+
+{#    <p style="position: absolute ;top:70%;width: 80%;left: 10%;font-size:40px;margin-bottom: 30px">#}
+{#        3.选择你所关注的用户#}
+{#    </p>#}
+{##}
+{#    <div id="yonghu" style="position: absolute ;width:80%;height:50%;left: 10%;top:35%">#}
+{##}
+{#    </div>#}
+
+    <div style="position: absolute ;width:80%;left: 10%;top: 90%;">
+        <p style="text-align: center;;font-size:40px;margin-bottom: 60px">
             3.推荐功能
         </p>
-
-        {#            <form>#}
-
         <div>
             <div class="control-group">
                 <div class="controls">
@@ -97,7 +104,6 @@
                         </h4>
                     </a>
                 </div>
-
                 <div class="list-group" id="tuijian_book_show">
                     <a href="#" class="list-group-item active">
                         <h4 class="list-group-item-heading">

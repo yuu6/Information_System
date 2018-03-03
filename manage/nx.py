@@ -5,9 +5,13 @@
 """
 import networkx as nx
 import pandas as pd
+import SIR.SIR
 import matplotlib.pyplot as plt
 from networkx.algorithms import community
 from networkx.algorithms.community import k_clique_communities
+from propagation.independent_cascade import independent_cascade
+from propagation.linear_threshold import linear_threshold
+import matplotlib.pyplot as plt
 
 def get_graph():
     nodes_pd = pd.read_csv("../dataset/nodes.csv")
@@ -37,7 +41,7 @@ def get_graph():
     G.add_nodes_from(node_list)
     # print(G.nodes(data=True))
 
-    G.add_weighted_edges_from(edge_list)
+    G.add_weighted_edges_from(edge_list,act_prob=0.8)
     # print(G.edges(data=True))
 
     # degree = list(G.degree())
@@ -57,16 +61,107 @@ def get_graph():
 
     # remove = [node for node, degree in G.degree().items()  if degree == 0]
     # G.remove_nodes_from(remove)
-    print(G.nodes(data = True))
-    # G.add_edges_from(edges)
-    nx.write_gexf(G, 'network.gexf',encoding='utf-8')
+    # print(G.nodes(data = True))
+    return G
 
-def get_graph_exist():
-    G = nx.read_gexf("../templates/info.gexf")
-    print(G.nodes(data = True))
+    # G.add_edges_from(edges)
+    # nx.write_gexf(G, 'network.gexf',encoding='utf-8')
+
+def delDegreeOne(G):
+    # print(G.number_of_nodes())
+    d = nx.degree(G)
+    list_de =[]
+    for i in d:
+        if i[1]==0:
+            list_de.append(i[0])
+    G.remove_nodes_from(list_de)
+    # print(G.number_of_nodes())
+    return G
+    # pass
+
+
+def topNBetweeness(G,n):
+    score = nx.betweenness_centrality(G)
+    score = sorted(score.items(), key=lambda item: item[1], reverse=True)
+    print("betweenness_centrality: ", score)
+    betweeness = []
+    for i in score[:n]:
+        betweeness.append(i[0])
+    return betweeness
+
+def topNDegree(G,n):
+    score = nx.degree(G)
+    # print(score.items)
+    # for i in score:
+
+    score = sorted(score, key=lambda x:x[1], reverse=True)
+    print("degree: ", score[:n])
+
+    degree = []
+    for i in score[:n]:
+        degree.append(i[0])
+    return degree
+    # output = []
+    # for node in score:
+    #     output.append(node[0])
+    #
+    # # print(output)
+    # fout = open("betweennessSorted.data", 'w')
+    # for target in output:
+    #     fout.write(str(target) + " ")
+
+def degree_fenbu(G):
+    print(nx.degree_histogram(G))
+
+def move_1(moxing,m,G=None):
+    if G==None:
+        G = delDegreeOne(get_graph())
+    m = int(m)
+    if m==3:
+        n=1
+    elif m==4:
+        n=10
+    elif m==5:
+        n=100
+
+    topDegreelist = topNBetweeness(G, n)
+    layers = []
+    print(topDegreelist)
+    print(type(moxing))
+    if int(moxing)==1:
+        print("linear_threshold")
+        layers = linear_threshold(G,topDegreelist)
+    elif int(moxing)==2:
+        print("independent_cascade")
+        layers = independent_cascade(G, topDegreelist)
+    print(layers)
+    return layers
+
 
 if __name__ =="__main__":
-    get_graph()
+    G = delDegreeOne(get_graph())
+    # degree = nx.degree_histogram(G)
+    # x = range(len(degree))
+    # y = [z / float(sum(degree)) for z in degree]
+    # plt.loglog(x, y, color="blue", linewidth=2)
+    # plt.show()
+    topDegreelist = topNBetweeness(G,100)
+    # topDegreelist = topNDegree(G,100)
+    # # degree_fenbu(G)
+    layers = independent_cascade(G,topDegreelist)
+    # DG = nx.DiGraph()
+    # DG.add_edges_from([(1, 2), (1, 3), (1, 5), (2, 1), (3, 2), (4, 2), (4, 3),  (4, 6), (5, 3), (5, 4), (5, 6), (6, 4), (6, 5)])
+    # layers =linear_threshold(DG, [1])
+    sum = 0
+    for i in layers:
+        sum+=len(i)
+
+    print(sum)
+    print(len(layers))
+
+
+
+
     # get_graph_exist()
 
 

@@ -27,13 +27,22 @@
 
             <table class="table table-hover table-striped" style="width: 100%" >
                 <tr style="width: 100%">
-                    <td style="width: 50%">平均度</td><td style="width: 50%;align-self: right">7.771</td>
+                    <td style="width: 50%">节点</td><td style="width: 50%;align-self: right">2503</td>
                 </tr>
                 <tr style="width: 100%">
-                    <td style="width: 50%">平均加权度</td><td style="width: 50%;align-self: right">47.772</td>
+                    <td style="width: 50%">边</td><td style="width: 50%;align-self: right">9754</td>
                 </tr>
                 <tr style="width: 100%">
-                    <td style="width: 50%">网络直径</td><td style="width: 50%;align-self: right">7</td>
+                    <td style="width: 50%">平均度</td><td style="width: 50%;align-self: right">3.897</td>
+                </tr>
+                <tr style="width: 100%">
+                    <td style="width: 50%">平均加权度</td><td style="width: 50%;align-self: right">23.964</td>
+                </tr>
+                <tr style="width: 100%">
+                    <td style="width: 50%">网络直径</td><td style="width: 50%;align-self: right">16</td>
+                </tr>
+                <tr style="width: 100%">
+                    <td style="width: 50%">平均路径长度</td><td style="width: 50%;align-self: right">5.712</td>
                 </tr>
                 <tr style="width: 100%">
                     <td style="width: 50%">模块度</td><td style="width: 50%;align-self: right"> 0.350</td>
@@ -42,10 +51,10 @@
                     <td style="width: 50%">社区划分</td><td style="width: 50%;align-self: right"> 18</td>
                 </tr>
                 <tr style="width: 100%">
-                    <td style="width: 50%">平均聚集系数</td><td style="width: 50%;align-self: right">0.219</td>
+                    <td style="width: 50%">平均聚集系数</td><td style="width: 50%;align-self: right">0.086</td>
                 </tr>
                 <tr style="width: 100%">
-                    <td style="width: 50%">平均路径长度</td><td style="width: 50%;align-self: right">2.81</td>
+                    <td style="width: 50%">特征向量中心度</td><td style="width: 50%;align-self: right">0.0095</td>
                 </tr>
 
             </table>
@@ -55,28 +64,28 @@
 
     </div>
 </div>
-<div id="other_top" style="position: absolute ;left: 80%;top: 30%;height: 65%;width: 20%">
-     <div class="list-group" style="width: 100%">
-      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
-        <h5 class="mb-1">节点特征显示</h5>
-      </a>
-
-
-      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-        <div class="d-flex w-100 justify-content-between">
-
-            <table class="table table-hover table-striped" style="width: 100%" >
-                <tr style="width: 100%">
-                    <td style="width: 50%">平均度</td><td style="width: 50%;align-self: right">7.771</td>
-                </tr>
-
-            </table>
-
-        </div>
-      </a>
-
-    </div>
-</div>
+{#<div id="other_top" style="position: absolute ;left: 80%;top: 50%;height: 50%;width: 20%">#}
+{#     <div class="list-group" style="width: 100%">#}
+{#      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">#}
+{#        <h5 class="mb-1">节点特征显示</h5>#}
+{#      </a>#}
+{##}
+{##}
+{#      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">#}
+{#        <div class="d-flex w-100 justify-content-between">#}
+{##}
+{#            <table class="table table-hover table-striped" style="width: 100%" >#}
+{#                <tr style="width: 100%">#}
+{#                    <td style="width: 50%">平均度</td><td style="width: 50%;align-self: right">7.771</td>#}
+{#                </tr>#}
+{##}
+{#            </table>#}
+{##}
+{#        </div>#}
+{#      </a>#}
+{##}
+{#    </div>#}
+{#</div>#}
     <script>
     var dom = document.getElementById("container");
     var myChart = echarts.init(dom);
@@ -126,8 +135,7 @@
                     {#        formatter: '{b}'#}
                     {#    }#}
                     force: {
-                        repulsion: 400,
-                        gravity:0.1,
+                        repulsion: 500
 
                     },
                     lineStyle: {
@@ -142,6 +150,10 @@
 
         myChart.setOption(option);
     }, 'xml');
+    myChart.on('click', function (s) {
+        console.log(s)
+    });
+
     </script>
 </body>
 </html>

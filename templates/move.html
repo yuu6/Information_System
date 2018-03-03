@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>动力学模型</title>
+      <link rel="stylesheet" href="../static/bootstrap-select/bootstrap.min.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="../static/bootstrap-select/bootstrap-select.css" type="text/css" media="screen">
+
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/echarts.min.js"></script>
+    <script src="../static/bootstrap-select/bootstrap.min.js"></script>
+    <script src="../static/bootstrap-select/bootstrap-select.js"></script>
+
+</head>
+<body>
+<div id="suanfa" style="position:absolute;top:20%;left: 30%;width: 40%;background-color: white">
+    <div>
+
+        <form style="width: 100%">
+            <table class="table" style="width: 100%">
+                  <caption style="text-align: center;"><p style="font-size: 50px">动力学模型分析</p></caption>
+                <tr>
+                    <td>请选择算法：</td>
+                    <td><select id="moxing" class="selectpicker show-tick form-control">
+                        <option value="1">线性阈值模型</option>
+                        <option value="2">独立级联模型</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>种子选择:</td>
+                    <td>
+                        <select id="degree" class="selectpicker show-tick form-control">
+                        <option value="3">度数最大的第1节点</option>
+                        <option value="4">度数最大的前10节点</option>
+                        <option value="5">度数最大的前100节点</option>
+                    </select></td>
+
+                </tr>
+                <tr> <td colspan="2"><div class="controls">
+                    <a id="success" class="btn btn-success" >确定</a>
+                </div> </td></tr>
+</tbody>
+            </table>
+
+        </form>
+    </div>
+
+
+
+    <div class="list-group" id="answer">
+                    <a href="#" class="list-group-item active">
+                        <h4 class="list-group-item-heading">
+                            过程显示
+                        </h4>
+                    </a>
+                </div>
+
+
+</div>
+<script type="text/javascript">
+
+    $("#success").on("click", function () {
+        console.log("run here")
+        var moxing_1 =$('#moxing').selectpicker('val');
+        console.log(moxing_1)
+        var degree_1 =$('#degree').selectpicker('val');
+        console.log(degree_1)
+        $.get("propagation", {moxing: moxing_1, degree: degree_1}, function (s) {
+
+            console.log(s)
+            for (var i = 0; i < s.length; i++) {
+                var oTest = document.getElementById("answer");
+
+                var newA = document.createElement("a");
+                newA.setAttribute("class", "list-group-item")
+                var newH = document.createElement("h4");
+                newH.innerHTML = "step "+i +"： 传播了"+s[i].length+"个节点"
+
+                newH.setAttribute("class", "list-group-item-heading")
+
+                newA.appendChild(newH)
+                {#newA.appendChild(newp)#}
+                oTest.appendChild(newA)
+            }
+
+        })
+    })
+
+</script>
+
+</body>
+</html>
