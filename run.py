@@ -184,6 +184,11 @@ def username():
         print("查询失败")
     return jsonify(name_list);
 
+
+@app.route('/analyse')
+def analyse():
+    return jsonify([1233]);
+
 @app.route('/bookname')
 def bookname():
     try:

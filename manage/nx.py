@@ -88,6 +88,22 @@ def topNBetweeness(G,n):
     for i in score[:n]:
         betweeness.append(i[0])
     return betweeness
+def topNCentility(G,n):
+    score = nx.degree_centrality(G)
+    score = sorted(score.items(), key=lambda item: item[1], reverse=True)
+    print("betweenness_centrality: ", score)
+    betweeness = []
+    for i in score[:n]:
+        betweeness.append(i[0])
+    return betweeness
+def topNCloseness(G,n):
+    score = nx.closeness_centrality(G)
+    score = sorted(score.items(), key=lambda item: item[1], reverse=True)
+    print("betweenness_centrality: ", score)
+    betweeness = []
+    for i in score[:n]:
+        betweeness.append(i[0])
+    return betweeness
 
 def topNDegree(G,n):
     score = nx.degree(G)
@@ -137,6 +153,27 @@ def move_1(moxing,m,G=None):
     print(layers)
     return layers
 
+def degree_ana():
+    score = nx.degree(G)
+
+    n1=0
+    n2=0
+    n3=0
+    n4=0
+    n5=0
+    for i in score:
+        if i[1]<=10:
+            n1+=1
+        elif i[1]>10 and i[1]<=50:
+            n2+=1
+        elif i[1]>50 and i[1]<=100:
+            n3+=1
+        elif i[1] > 100:
+            n5 += 1
+
+    print(n1,n2,n3,n5)
+
+
 
 if __name__ =="__main__":
     G = delDegreeOne(get_graph())
@@ -145,19 +182,24 @@ if __name__ =="__main__":
     # y = [z / float(sum(degree)) for z in degree]
     # plt.loglog(x, y, color="blue", linewidth=2)
     # plt.show()
-    topDegreelist = topNBetweeness(G,100)
-    # topDegreelist = topNDegree(G,100)
+    dic = degree_ana()
+    # topDegreelist = topNBetweeness(G,100)
+    # print(topDegreelist)
+    # topDegreelist = topNCloseness(G,100)
+    print(dic)
+
+    # print(nx.diameter(G))
     # # degree_fenbu(G)
-    layers = independent_cascade(G,topDegreelist)
+    # layers = independent_cascade(G,topDegreelist)
     # DG = nx.DiGraph()
     # DG.add_edges_from([(1, 2), (1, 3), (1, 5), (2, 1), (3, 2), (4, 2), (4, 3),  (4, 6), (5, 3), (5, 4), (5, 6), (6, 4), (6, 5)])
     # layers =linear_threshold(DG, [1])
-    sum = 0
-    for i in layers:
-        sum+=len(i)
-
-    print(sum)
-    print(len(layers))
+    # sum = 0
+    # for i in layers:
+    #     sum+=len(i)
+    #
+    # print(sum)
+    # print(len(layers))
 
 
 
