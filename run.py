@@ -8,7 +8,7 @@ import pandas as pd
 import csv
 import json,math
 from collections import Counter
-from manage.nx import move_1
+from manage.nx import move_1,move_2
 # from manage.wight import get_all_sim
 import networkx as nx
 from similarity.jaccard import jaccard
@@ -364,6 +364,32 @@ def propagation():
     print(moxing,degree)
     G = delDegreeOne(get_graph())
     jieguo = move_1(moxing,degree,G)
+    lens = len(jieguo)-1
+    output = []
+    for i in jieguo:
+        node = []
+        for j in i:
+            node.append(int(j))
+        output.append(node)
+    return jsonify(output)
+
+@app.route('/propagation_2', methods=['Get', 'POST'])
+def propagation_2():
+    print("run here")
+    moxing = request.args.get("moxing")
+    username = request.args.get("username")
+    print(moxing,username)
+    G = delDegreeOne(get_graph())
+
+    sql = "SELECT userid FROM all_tag WHERE name = \"" + username + '\"';
+
+    data = []
+    try:
+        data = query_db(sql)
+    except Exception:
+        print("查询失败")
+    userid = data[0]["userid"]
+    jieguo = move_2(moxing,userid,G)
     lens = len(jieguo)-1
     output = []
     for i in jieguo:

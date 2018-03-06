@@ -131,6 +131,19 @@ def topNDegree(G,n):
 def degree_fenbu(G):
     print(nx.degree_histogram(G))
 
+def move_2(moxing,id,G=None):
+    id = int(id)
+    layers = []
+    print(type(moxing))
+    if int(moxing) == 1:
+        print("linear_threshold")
+        layers = linear_threshold(G, [id])
+    elif int(moxing) == 2:
+        print("independent_cascade")
+        layers = independent_cascade(G, [id])
+    print(layers)
+    return layers
+
 def move_1(moxing,m,G=None):
     if G==None:
         G = delDegreeOne(get_graph())
@@ -141,7 +154,6 @@ def move_1(moxing,m,G=None):
         n=10
     elif m==5:
         n=100
-
     topDegreelist = topNBetweeness(G, n)
     layers = []
     print(topDegreelist)

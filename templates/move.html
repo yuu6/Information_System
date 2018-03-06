@@ -21,22 +21,33 @@
                   <caption style="text-align: center;"><p style="font-size: 50px">动力学模型分析</p></caption>
                 <tr>
                     <td>请选择算法：</td>
-                    <td><select id="moxing" class="selectpicker show-tick form-control">
+                    <td><select id="moxing" class="selectpicker show-tick form-control" title="请选择模型">
                         <option value="1">线性阈值模型</option>
                         <option value="2">独立级联模型</option>
                     </select></td>
                 </tr>
                 <tr>
-                    <td>种子选择:</td>
+                    <td>选择种子:</td>
                     <td>
-                        <select id="degree" class="selectpicker show-tick form-control">
+                        <select id="degree" class="selectpicker show-tick form-control" title="请选择种子节点">
                         <option value="3">度数最大的第1节点</option>
                         <option value="4">度数最大的前10节点</option>
                         <option value="5">度数最大的前100节点</option>
-                    </select></td>
-
+                    </select>
+                    </td>
                 </tr>
-                <tr> <td colspan="2"><div class="controls">
+{#                <tr>#}
+{#                    <td colspan="2" style="text-align: center">或者</td>#}
+{#                </tr>#}
+                 <tr>
+                    <td>选择用户:</td>
+                    <td>
+                        <select id="username" class="selectpicker show-tick form-control" title="请选择用户节点">
+                    </select>
+                    </td>
+                </tr>
+
+                <tr> <td colspan="2" style="text-align: center"><div class="controls">
                     <a id="success" class="btn btn-success" >确定</a>
                 </div> </td></tr>
 </tbody>
@@ -59,14 +70,28 @@
 </div>
 <script type="text/javascript">
 
+     $.get("username", function (username) {
+            {#console.log(username.length);#}
+            for (var i = 0; i < username.length; i++) {
+                {#console.log(username[i]);#}
+                $("#username").append("<option value='" + Object.values(username[i]) + "'>" + Object.values(username[i]) + "</option>");
+            }
+            $('#username').selectpicker('refresh');
+        }
+    )
+
+
+
     $("#success").on("click", function () {
         console.log("run here")
         var moxing_1 =$('#moxing').selectpicker('val');
         console.log(moxing_1)
         var degree_1 =$('#degree').selectpicker('val');
-        console.log(degree_1)
-        $.get("propagation", {moxing: moxing_1, degree: degree_1}, function (s) {
-
+        console.log(degree_1=="")
+        var username_1 =$('#username').selectpicker('val');
+        console.log(username_1)
+        if(moxing_1!= "" && degree_1!= ""){
+            $.get("propagation", {moxing: moxing_1, degree: degree_1}, function (s) {
             console.log(s)
             for (var i = 0; i < s.length; i++) {
                 var oTest = document.getElementById("answer");
@@ -75,15 +100,32 @@
                 newA.setAttribute("class", "list-group-item")
                 var newH = document.createElement("h4");
                 newH.innerHTML = "step "+i +"： 传播了"+s[i].length+"个节点"
-
                 newH.setAttribute("class", "list-group-item-heading")
-
                 newA.appendChild(newH)
                 {#newA.appendChild(newp)#}
                 oTest.appendChild(newA)
-            }
+                }
+            })
+        }
+        else if(moxing_1!= "" && username!= ""){
+                $.get("propagation_2", {moxing: moxing_1, username: username_1}, function (s) {
+                            console.log(s)
+                            for (var i = 0; i < s.length; i++) {
+                                var oTest = document.getElementById("answer");
+                                var newA = document.createElement("a");
+                                newA.setAttribute("class", "list-group-item")
+                                var newH = document.createElement("h4");
+                                newH.innerHTML = "step "+i +"： 传播了"+s[i].length+"个节点"
+                                newH.setAttribute("class", "list-group-item-heading")
+                                newA.appendChild(newH)
+                                {#newA.appendChild(newp)#}
+                                oTest.appendChild(newA)
+                                }
+                            })
+        }
 
-        })
+
+
     })
 
 </script>
