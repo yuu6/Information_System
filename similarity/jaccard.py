@@ -8,8 +8,9 @@ Implement jaccard similarity
 #    NetworkX: http://networkx.lanl.gov/
 
 import networkx as nx
-__author__ = """Hung-Hsuan Chen (hhchen@psu.edu)"""
-__all__ = ['jaccard']
+import matplotlib.pyplot as plt
+from networkx.algorithms import community
+# from manage.nx import get_graph,delDegreeOne
 
 def jaccard(G, remove_neighbors=False, dump_process=False):
   """Return the jaccard similarity between nodes
@@ -66,8 +67,14 @@ def jaccard(G, remove_neighbors=False, dump_process=False):
 
   return jac
 
-if __name__ =="__main__":
-  G = nx.Graph()
-  G.add_edges_from([(0, 7), (0, 1), (0, 2), (0, 3), (1, 4), (2, 4), (3, 4), (4, 5), (4, 6)])
-  print(jaccard(G)[0])
+# if __name__ =="__main__":
+#   G = nx.Graph()
+#   # G = nx.dodecahedral_graph()
+#   G.add_edges_from([(0, 7), (0, 1), (0, 2), (0, 3), (1, 4), (2, 4), (3, 4), (4, 5), (4, 6)])
+#
+#   plt.savefig("ba.png")
+#   plt.show()
+#   # print(jaccard(G)[0])
+
+
 

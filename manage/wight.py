@@ -114,12 +114,25 @@ def zhixing(a):
 
 def get_Similar(a,b):
     s1 = zhixing(a)
-
     s2 = zhixing(b)
-    # print(s1)
-    # print(s2)
+    return  calcuteSimilar(s1,s2)
 
-    return  calcuteSimilar(s1,s2)*100
+def get_Filmity(a,b):
+    fam_pd = pd.read_csv("famility.csv")
+    print(fam_pd)
+    str_ = "source == " + a +" & target == "+b
+    str_2 = "source == " + b +" & target == "+a
+    # print(fam_pd.query(str_2))
+    if fam_pd.query(str_) is not None:
+        c = fam_pd.query(str_)
+        return c["famility"]
+    elif fam_pd.query(str_2) is not None:
+        c = fam_pd.query(str_2)
+        return c["famility"]
+
+
+def get_all_sim(a,b):
+    return get_Similar(a, b)+get_Filmity(a,b)
 
 def tuijianuser(tag):
     DATABASE = '../data_procession/douban.db'
@@ -136,12 +149,12 @@ def tuijianuser(tag):
         simi = calcuteSimilar(s1, tag)
         dict_[i[0]] = simi
     conn.close()
-
     c = Counter(dict_).most_common()
     print(c)
     return dict_
 
 if __name__ =="__main__":
+    print(get_all_sim("12287","11233"))
     #得到每个用户的标签 13402 10000 13404 13409
     # get_movie_tag()
     # get_book_tag()
@@ -152,8 +165,25 @@ if __name__ =="__main__":
     # print(all.columns)
     # all.drop(["userid_other","username_other"],axis=1,inplace=True)
     # all.to_csv("all.csv", index=False)
+    #
+    # DATABASE = '../data_procession/douban.db'
+    # conn = sqlite3.connect(DATABASE)
+    # c = conn.cursor()
+    # # print("Opened database successfully")
+    # sql1 = "SELECT DISTINCT  userid from UserNode"
+    # userid = list(c.execute(sql1))
+    # list_ = []
+    #
+    # for i in range(len(userid)):
+    #     print(userid[i][0])
+    #     for j in range(i,len(userid)):
+    #         li_=[userid[i][0],userid[j][0],get_Similar(userid[i][0],userid[j][0])]
+    #         list_.append(li_)
+    #
+    #
+    # print(li_)
 
-    # print(get_Similar("10817","10998"))
+    # conn.close()
     #计算相似度
 
     # ed_pd = pd.read_csv("../dataset/edges.csv")
@@ -162,8 +192,8 @@ if __name__ =="__main__":
     # ed_pd.to_csv("edges_wight.csv",index=False)
     # print(get_Similar("10012","10009"))
     # pass
-    list_ = []
-    list_.append('日本')
-    list_.append('小说')
-    list_.append('治愈系')
-    tuijianuser(list_)
+    # list_ = []
+    # list_.append('日本')
+    # list_.append('小说')
+    # list_.append('治愈系')
+    # tuijianuser(list_)

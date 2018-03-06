@@ -12,6 +12,8 @@ from networkx.algorithms.community import k_clique_communities
 from propagation.independent_cascade import independent_cascade
 from propagation.linear_threshold import linear_threshold
 import matplotlib.pyplot as plt
+from similarity.jaccard import *
+
 
 def get_graph():
     nodes_pd = pd.read_csv("../dataset/nodes.csv")
@@ -153,7 +155,7 @@ def move_1(moxing,m,G=None):
     print(layers)
     return layers
 
-def degree_ana():
+def degree_ana(G):
     score = nx.degree(G)
 
     n1=0
@@ -173,20 +175,49 @@ def degree_ana():
 
     print(n1,n2,n3,n5)
 
+def get_famility(G):
+
+    ans = jaccard(G)
+    li = []
+    for source, v in ans.items():
+        for target, simil in v.items():
+            lis = [source, target, simil]
+            li.append(lis)
+    print(li)
+    fam = pd.DataFrame(data=li, columns=["source", "target", "famility"])
+    fam.to_csv("famility.csv")
+
+#
+# if  __name__ =="__main__":
+#     G = delDegreeOne(get_graph()).to_undirected()
+#
+#     ans = jaccard(G)
+#     li = []
+#     for source,v in ans.items():
+#         for target,simil in v.items():
+#             lis = [source,target,simil]
+#             li.append(lis)
+#     print(li)
+#     fam = pd.DataFrame(data=li,columns=["source", "target", "famility"])
+#     fam.to_csv("famility.csv",index=False)
+
+    #现在求每两个用户的相似度，根据他们的userid 直接获得用户的标签，之后根据标签计算相似度
 
 
-if __name__ =="__main__":
-    G = delDegreeOne(get_graph())
+
+
+
+
     # degree = nx.degree_histogram(G)
     # x = range(len(degree))
     # y = [z / float(sum(degree)) for z in degree]
     # plt.loglog(x, y, color="blue", linewidth=2)
     # plt.show()
-    dic = degree_ana()
+    # dic = degree_ana()
     # topDegreelist = topNBetweeness(G,100)
     # print(topDegreelist)
     # topDegreelist = topNCloseness(G,100)
-    print(dic)
+    # print(dic)
 
     # print(nx.diameter(G))
     # # degree_fenbu(G)
@@ -198,6 +229,11 @@ if __name__ =="__main__":
     # for i in layers:
     #     sum+=len(i)
     #
+
+
+
+
+
     # print(sum)
     # print(len(layers))
 

@@ -9,6 +9,7 @@ import csv
 import json,math
 from collections import Counter
 from manage.nx import move_1
+# from manage.wight import get_all_sim
 import networkx as nx
 from similarity.jaccard import jaccard
 from similarity.ascos import ascos
@@ -66,28 +67,51 @@ def tuijian_user():
 
 @app.route('/shejiao_tuijian_2', methods=['Get', 'POST'])
 def shejiao_tuijian_2():
+    #得到用户id 调用底层的函数
     name = request.args.get("name")
+    fam_pd = pd.read_csv("manage/famility.csv")
+
     tag = []
-    sql = "SELECT * FROM all_tag WHERE name = \"" + name + '\"';
+    sql = "SELECT userid FROM all_tag WHERE name = \"" + name + '\"';
+
+    sql2 = "select DISTINCT  userid from all_tag"
     data = []
+    data2= []
     try:
         data = query_db(sql)
-        print(sql)
-        print(data)
+        data2 = query_db(sql2)
     except Exception:
         print("查询失败")
     # print(data)
-    list1 = data[0]['book_tag'][1:-1].replace("'", "").strip().split(",")
-    list2 = data[0]['movie_tag'][1:-1].replace("'", "").strip().split(",")
-    # print(list1)
-    for j in list1:
-        tag.append(j)
-    for t in list2:
-        tag.append(t)
+    mubiao_user = data[0]["userid"]
+    sim = []
+    for i in range(len(data2)):
+        tuijian_user = data2[i]["userid"]
+        if tuijian_user==mubiao_user:
+            continue
+        temp_= get_all_sim(mubiao_user, tuijian_user, fam_pd)
+        if len(list(temp_))>0:
+            sim.append([mubiao_user,tuijian_user,list(temp_)[0]])
+    sim.sort(key=lambda x:x[2],reverse=True)
+    # print(sim)
+    sim1 = []
+    for i in range(len(sim)):
+        sim1.append(sim[i][1])
+    print(sim1)
+    userlist = sim1[:6]
 
+    # list1 = data[0]['book_tag'][1:-1].replace("'", "").strip().split(",")
+    # list2 = data[0]['movie_tag'][1:-1].replace("'", "").strip().split(",")
+    # # print(list1)
+    # for j in list1:
+    #     tag.append(j)
+    # for t in list2:
+    #     tag.append(t)
+    #
     dic_tuijian = {}
-    userlist = tuijianuser(tag)
+    # userlist = tuijianuser(tag)
 
+    #得到推荐的用户名称列表
     user = get_userinfo(userlist)
     list_book_name = get_userbookname(userlist)
     list_movie_name = get_usermovie_info(userlist)
@@ -455,17 +479,14 @@ def calcuteSimilar(series1,series2):
     elif len(series2)==1 and series2[0]=='':
         # print("here")
         return 0.01
-
-
     unionLen = len(set(series1) & set(series2))
-
     if unionLen ==0 :
         return 0.01
 
     if unionLen == 0: return 0.0
     product = len(series1) * len(series2)
     similarity = unionLen / math.sqrt(product)
-    return similarity
+    return similarity>0 if similarity else 0.01
 
 def get_userinfo(li):
     li_ = []
@@ -484,6 +505,28 @@ def query_db(query, args=(), one=False):
     rv = [dict((cur.description[idx][0], value)
                for idx, value in enumerate(row)) for row in cur.fetchall()]
     return (rv[0] if rv else None) if one else rv
+
+def get_Similar(a,b):
+    s1 = zhixing(a)
+    s2 = zhixing(b)
+    c = calcuteSimilar(s1,s2)
+    # print(c)
+    return  c
+
+def get_all_sim(a,b,f):
+    return get_Similar(a, b)+get_Filmity(a,b,f)
+
+def get_Filmity(a,b,fam_pd):
+    str_ = "source == " + a +" & target == "+b
+    str_2 = "source == " + b +" & target == "+a
+    # print(fam_pd.query(str_2))
+    if fam_pd.query(str_) is not None:
+        c = fam_pd.query(str_)
+        return c["famility"]
+    elif fam_pd.query(str_2) is not None:
+        c = fam_pd.query(str_2)
+        return c["famility"]
+
 
 def zhixing(a):
     # print("Opened database successfully")
