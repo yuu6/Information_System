@@ -73,7 +73,6 @@ def shejiao_tuijian_2():
 
     tag = []
     sql = "SELECT userid FROM all_tag WHERE name = \"" + name + '\"';
-
     sql2 = "select DISTINCT  userid from all_tag"
     data = []
     data2= []
@@ -532,6 +531,9 @@ def query_db(query, args=(), one=False):
                for idx, value in enumerate(row)) for row in cur.fetchall()]
     return (rv[0] if rv else None) if one else rv
 
+def get_all_sim(a,b,f):
+    return get_Similar(a, b)+get_Film(a,b,f)
+
 def get_Similar(a,b):
     s1 = zhixing(a)
     s2 = zhixing(b)
@@ -539,10 +541,7 @@ def get_Similar(a,b):
     # print(c)
     return  c
 
-def get_all_sim(a,b,f):
-    return get_Similar(a, b)+get_Filmity(a,b,f)
-
-def get_Filmity(a,b,fam_pd):
+def get_Film(a,b,fam_pd):
     str_ = "source == " + a +" & target == "+b
     str_2 = "source == " + b +" & target == "+a
     # print(fam_pd.query(str_2))
